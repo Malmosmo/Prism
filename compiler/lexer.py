@@ -13,6 +13,7 @@ class Lexer:
             self.lg.add(key, value)
 
         self.lg.ignore(self.ignore)
+        self.lg.ignore(r"//.*")
 
         return self.lg.build()
 
