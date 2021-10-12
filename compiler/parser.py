@@ -40,7 +40,7 @@ class Parser:
         ##################################################
         # Types
         ##################################################
-        @self.pg.production('type : INT')
+        @self.pg.production('type : TYPE_INT')
         def type_int(state: ParserState, p):
             return TypeIntNode(p[0].getstr(), p[0].getsourcepos())
 

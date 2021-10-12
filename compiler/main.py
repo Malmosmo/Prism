@@ -3,7 +3,7 @@ from compiler.parser import Parser, ParserState
 
 
 KEYWORDS = {
-    "INT": r"int(?!\w)",
+    "TYPE_INT": r"int(?!\w)",
 }
 
 OPERATORS = {
