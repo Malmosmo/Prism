@@ -1,0 +1,28 @@
+prog    :   prog decl ;
+        :   decl ;
+        :   prog func
+        :   func
+
+decl    :   decl , var_decl
+        :   type var_decl
+
+type    :   INT
+
+var_decl:   IDENTIFIER
+
+func    :   type IDENTIFIER ( ) { Body }
+
+##
+Body    :   Body stmtBL
+        :   stmtBL
+
+stmtBL  :   stmt
+        :   decl
+##
+
+stmt    :   assg ;
+
+assg    :   IDENTIFIER = expr
+
+expr    :   ( expr )
+        :   INTEGER

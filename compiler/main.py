@@ -1,4 +1,5 @@
 from compiler.lexer import Lexer
+from compiler.parser import Parser, ParserState
 
 
 KEYWORDS = {
@@ -6,7 +7,7 @@ KEYWORDS = {
 }
 
 OPERATORS = {
-    "ASSIGN": r"\=",
+    "=": r"\=",
 }
 
 CONSTANTS = {
@@ -14,7 +15,13 @@ CONSTANTS = {
 }
 
 PUNCTUATORS = {
-    "SEMICOLON": r"\;",
+    "(": r"\(",
+    ")": r"\)",
+
+    "{": r"\{",
+    "}": r"\}",
+
+    ";": r"\;",
 }
 
 IDENTIFIERS = {
@@ -34,4 +41,9 @@ class Compiler:
 
         tokens = lexer.lex(source)
 
-        return tokens
+        state = ParserState()
+        parser = Parser(list(TOKENTYPES), [], file, source)
+
+        ast = parser.parse(tokens, state)
+
+        return ast.rep()
