@@ -1,5 +1,6 @@
 package main
 
-func main() {
-	println(2)
+func main () {
+var a int = 2
+println(a)
 }

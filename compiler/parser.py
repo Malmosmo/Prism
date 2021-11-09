@@ -70,6 +70,7 @@ class Parser:
         # Statement
         ##################################################
         @self.pg.production('stmt : expr ;')
+        @self.pg.production('stmt : decl ;')
         def stmt(state: ParserState, p):
             return p[0]
 
@@ -83,6 +84,13 @@ class Parser:
         @self.pg.production('builtfunc : PRINT ( expr )')
         def builtfunc(state: ParserState, p):
             return BuiltinFunctionNode(p[0].getstr(), p[2], p[0].getsourcepos())
+
+        ##################################################
+        # Declaration
+        ##################################################
+        @self.pg.production('decl : type IDENTIFIER = expr')
+        def stmt(state: ParserState, p):
+            return VarDecNode(p[0], p[1].getstr(), p[3], p[0].getsourcepos())
 
         ##################################################
         # Assign
@@ -101,6 +109,10 @@ class Parser:
         @self.pg.production('expr : INTEGER')
         def expr_int(state: ParserState, p):
             return IntegerNode(p[0], p[0].getsourcepos())
+
+        @self.pg.production('expr : IDENTIFIER')
+        def expr_access(state: ParserState, p):
+            return VarAccessNode(p[0].getstr(), p[0].getsourcepos())
 
         ##################################################
         # Types

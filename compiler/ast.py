@@ -80,6 +80,19 @@ class BlockNode(Node):
 
 
 ##################################################
+# Declaration
+##################################################
+class VarDecNode(Node):
+    def __init__(self, type_, name, value, position: SourcePosition) -> None:
+        self.type = type_
+        self.name = name
+        super().__init__(value, position)
+
+    def rep(self):
+        return f"{self.__class__.__name__}({self.type.rep()}, {self.name}, {self.value.rep()})"
+
+
+##################################################
 # Expressions
 ##################################################
 class AssignNode(Node):
@@ -89,6 +102,11 @@ class AssignNode(Node):
 
     def rep(self):
         return f"{self.__class__.__name__}({self.name}, {self.value.rep()})"
+
+
+class VarAccessNode(Node):
+    def __init__(self, value, position: SourcePosition) -> None:
+        super().__init__(value, position)
 
 
 ##################################################

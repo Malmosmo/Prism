@@ -52,6 +52,18 @@ class CodeGenerator:
         return "\n".join(self.generate(cmd_node) for cmd_node in node.commands)
 
     ##################################################
+    # Declaration
+    ##################################################
+    def gen_VarDecNode(self, node):
+        return f"var {node.name} {self.generate(node.type)} = {self.generate(node.value)}"
+
+    ##################################################
+    # Variable Access
+    ##################################################
+    def gen_VarAccessNode(self, node):
+        return f"{node.value}"
+
+    ##################################################
     # Types
     ##################################################
     def gen_TypeNode(self, node):

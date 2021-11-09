@@ -1,28 +1,21 @@
-prog    :   prog decl ;
-        :   decl ;
-        :   prog func
-        :   func
+prog : func
 
-decl    :   decl , var_decl
-        :   type var_decl
 
-type    :   INT
+func : type IDENTIFIER () { block rtrn-stmt }
+       type IDENTIFIER () { rtrn-stmt }
+       IDENTIFIER () { block }
 
-var_decl:   IDENTIFIER
+block : block stmt
+        stmt
 
-func    :   type IDENTIFIER ( ) { Body }
+rtrn-stmt : RETURN stmt
 
-##
-Body    :   Body stmtBL
-        :   stmtBL
+stmt : expr ;
+       builtinfunc ;
 
-stmtBL  :   stmt
-        :   decl
-##
+builtinfunc : PRINT ( expr )
 
-stmt    :   assg ;
+expr : INT
+     : IDENTIFIER
 
-assg    :   IDENTIFIER = expr
-
-expr    :   ( expr )
-        :   INTEGER
+type : TYPE_INT
