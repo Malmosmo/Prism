@@ -43,7 +43,7 @@ class Parser:
 
         @self.pg.production('func : IDENTIFIER ( ) { block }')
         def void_func(state: ParserState, p):
-            return VoidFuncNode(p[0], p[1].getstr(), p[5], p[0].getsourcepos())
+            return VoidFuncNode(p[0].getstr(), p[4], p[0].getsourcepos())
 
         ##################################################
         # Block
@@ -72,6 +72,17 @@ class Parser:
         @self.pg.production('stmt : expr ;')
         def stmt(state: ParserState, p):
             return p[0]
+
+        @self.pg.production('stmt : builtfunc ;')
+        def stmt(state: ParserState, p):
+            return p[0]
+
+        ##################################################
+        # Builtin Functions
+        ##################################################
+        @self.pg.production('builtfunc : PRINT ( expr )')
+        def builtfunc(state: ParserState, p):
+            return BuiltinFunctionNode(p[0].getstr(), p[2], p[0].getsourcepos())
 
         ##################################################
         # Assign

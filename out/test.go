@@ -1,6 +1,5 @@
 package main
 
-func main() int {
-	a := 2
-	return a
+func main() {
+	println(2)
 }

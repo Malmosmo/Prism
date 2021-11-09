@@ -25,7 +25,19 @@ class CodeGenerator:
     # Functions
     ##################################################
     def gen_FuncNode(self, node):
-        return f"""func {node.name} () {self.generate(node.type)} {{\n{self.generate(node.body)}\n{self.generate(node.return_value)}\n}}"""
+        return f"func {node.name} () {self.generate(node.type)} {{\n{self.generate(node.body)}\n{self.generate(node.return_value)}\n}}"
+
+    def gen_VoidFuncNode(self, node):
+        return f"func {node.name} () {{\n{self.generate(node.body)}\n}}"
+
+    ##################################################
+    # Builtin Functions
+    ##################################################
+    def gen_BuiltinFunctionNode(self, node):
+        if node.func == "print":
+            return f"println({self.generate(node.value)})"
+
+        return None
 
     ##################################################
     # Return

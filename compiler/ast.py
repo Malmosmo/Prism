@@ -44,6 +44,19 @@ class VoidFuncNode(Node):
 
 
 ##################################################
+# Builtin Functions
+##################################################
+class BuiltinFunctionNode(Node):
+    def __init__(self, func, value, position: SourcePosition) -> None:
+        self.func = func
+        self.value = value
+        self.position = position
+
+    def rep(self):
+        return f"{self.__class__.__name__}({self.func}, {self.value.rep()})"
+
+
+##################################################
 # Return
 ##################################################
 class ReturnNode(Node):

@@ -1,11 +1,14 @@
+import subprocess
+
 from compiler.generator import CodeGenerator
 from compiler.lexer import Lexer
 from compiler.parser import Parser, ParserState
 
 
 KEYWORDS = {
+    "PRINT": r"print(?!\w)",
     "TYPE_INT": r"int(?!\w)",
-    "RETURN": r"return(?!\w)"
+    "RETURN": r"return(?!\w)",
 }
 
 OPERATORS = {
@@ -53,5 +56,12 @@ class Compiler:
 
         with open("./out/test.go", "w") as f:
             f.write(code_gen.output)
+
+        response = subprocess.Popen(["go", "build", "-o", "./bin/out.exe", "./out/test.go"], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        print("----------------------")
+        print(response.stdout.read())
+        print(response.stderr.read())
+        print("----------------------")
 
         return code_gen.output
