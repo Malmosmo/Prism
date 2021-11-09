@@ -33,41 +33,74 @@ class Parser:
         ##################################################
         # Functions
         ##################################################
-        @self.pg.production('func : type IDENTIFIER ( ) { stmt }')
+        @self.pg.production('func : type IDENTIFIER ( ) { block rtrn-stmt }')
         def func(state: ParserState, p):
-            return FuncNode(p[0], p[1].getstr(), p[5], p[0].getsourcepos())
+            return FuncNode(p[0], p[1].getstr(), p[5], p[6], p[0].getsourcepos())
+
+        @self.pg.production('func : type IDENTIFIER ( ) { rtrn-stmt }')
+        def func_1(state: ParserState, p):
+            return FuncNode(p[0], p[1].getstr(), BlockNode([], p[5].getsourcepos()), p[5], p[0].getsourcepos())
+
+        @self.pg.production('func : IDENTIFIER ( ) { block }')
+        def void_func(state: ParserState, p):
+            return VoidFuncNode(p[0], p[1].getstr(), p[5], p[0].getsourcepos())
 
         ##################################################
-        # Types
+        # Block
         ##################################################
-        @self.pg.production('type : TYPE_INT')
-        def type_int(state: ParserState, p):
-            return TypeIntNode(p[0].getstr(), p[0].getsourcepos())
+        @self.pg.production('block : block stmt')
+        def block(state: ParserState, p):
+            block = p[0]
+            block.add(p[1])
+
+            return block
+
+        @self.pg.production('block : stmt')
+        def block_st(state: ParserState, p):
+            return BlockNode([p[0]], p[0].getsourcepos())
+
+        ##################################################
+        # Return
+        ##################################################
+        @self.pg.production('rtrn-stmt : RETURN stmt')
+        def rtrn_stmt(state: ParserState, p):
+            return ReturnNode(p[1], p[0].getsourcepos())
 
         ##################################################
         # Statement
         ##################################################
-        @self.pg.production('stmt : assg ;')
+        @self.pg.production('stmt : expr ;')
         def stmt(state: ParserState, p):
             return p[0]
 
         ##################################################
         # Assign
         ##################################################
-        @self.pg.production('assg : IDENTIFIER = expr')
-        def assg(state: ParserState, p):
-            return AssignNode(p[0].getstr(), p[2], p[0].getsourcepos())
+        # @self.pg.production('assg : IDENTIFIER = expr')
+        # def assg(state: ParserState, p):
+        #     return AssignNode(p[0].getstr(), p[2], p[0].getsourcepos())
 
         ##################################################
         # Expressions
         ##################################################
-        @self.pg.production('expr : ( expr )')
-        def expr_self(state: ParserState, p):
-            return p[1]
+        # @self.pg.production('expr : ( expr )')
+        # def expr_self(state: ParserState, p):
+        #     return p[1]
 
         @self.pg.production('expr : INTEGER')
         def expr_int(state: ParserState, p):
             return IntegerNode(p[0], p[0].getsourcepos())
+
+        ##################################################
+        # Types
+        ##################################################
+        @self.pg.production('type : TYPE_INT')
+        def type_int(state: ParserState, p):
+            return TypeNode(p[0].getstr(), p[0].getsourcepos())
+
+        ##################################################
+        # Literals
+        ##################################################
 
         ##################################################
         # Errors

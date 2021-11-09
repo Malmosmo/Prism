@@ -22,22 +22,48 @@ class ProgramNode(Node):
 # Functions
 ##################################################
 class FuncNode(Node):
-    def __init__(self, type_, name, body, position: SourcePosition) -> None:
+    def __init__(self, type_, name, body, return_value, position: SourcePosition) -> None:
         self.type = type_
+        self.name = name
+        self.body = body
+        self.return_value = return_value
+        self.position = position
+
+    def rep(self):
+        return f"{self.__class__.__name__}({self.type.rep()}, {self.name}, {self.body.rep()}, {self.return_value.rep()})"
+
+
+class VoidFuncNode(Node):
+    def __init__(self, name, body, position: SourcePosition) -> None:
         self.name = name
         self.body = body
         self.position = position
 
     def rep(self):
-        return f"{self.__class__.__name__}({self.type.rep()}, {self.name}, {self.body.rep()})"
+        return f"{self.__class__.__name__}({self.name}, {self.body.rep()})"
 
 
 ##################################################
-# Types
+# Return
 ##################################################
-class TypeIntNode(Node):
+class ReturnNode(Node):
+    def __init__(self, value, position: SourcePosition) -> None:
+        super().__init__(value, position)
+
+
+##################################################
+# Block
+##################################################
+class BlockNode(Node):
+    def __init__(self, value, position: SourcePosition) -> None:
+        self.commands = value
+        self.position = position
+
+    def add(self, value):
+        self.commands.append(value)
+
     def rep(self):
-        return f"{self.__class__.__name__}({self.value})"
+        return f"{self.__class__.__name__}([{', '.join((command.rep() for command in self.commands))}])"
 
 
 ##################################################
@@ -50,6 +76,13 @@ class AssignNode(Node):
 
     def rep(self):
         return f"{self.__class__.__name__}({self.name}, {self.value.rep()})"
+
+
+##################################################
+# Types
+##################################################
+class TypeNode(Node):
+    pass
 
 
 ##################################################

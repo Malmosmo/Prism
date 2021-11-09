@@ -1,9 +1,11 @@
+from compiler.generator import CodeGenerator
 from compiler.lexer import Lexer
 from compiler.parser import Parser, ParserState
 
 
 KEYWORDS = {
     "TYPE_INT": r"int(?!\w)",
+    "RETURN": r"return(?!\w)"
 }
 
 OPERATORS = {
@@ -37,13 +39,19 @@ class Compiler:
         with open(file, 'r') as f:
             source = f.read()
 
+        # lex
         lexer = Lexer(TOKENTYPES, r'[ \n\t\r\f\v]+')
-
         tokens = lexer.lex(source)
 
+        # parser
         state = ParserState()
         parser = Parser(list(TOKENTYPES), [], file, source)
 
         ast = parser.parse(tokens, state)
 
-        return ast.rep()
+        code_gen = CodeGenerator(ast)
+
+        with open("./out/test.go", "w") as f:
+            f.write(code_gen.output)
+
+        return code_gen.output
