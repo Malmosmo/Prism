@@ -57,7 +57,7 @@ class Parser:
 
         @self.pg.production('block : stmt')
         def block_st(state: ParserState, p):
-            return BlockNode([p[0]], p[0].getsourcepos())
+            return BlockNode(p[0], p[0].getsourcepos())
 
         ##################################################
         # Return
@@ -106,9 +106,9 @@ class Parser:
         # def expr_self(state: ParserState, p):
         #     return p[1]
 
-        @self.pg.production('expr : INTEGER')
+        @self.pg.production('expr : literal')
         def expr_int(state: ParserState, p):
-            return IntegerNode(p[0], p[0].getsourcepos())
+            return p[0]
 
         @self.pg.production('expr : IDENTIFIER')
         def expr_access(state: ParserState, p):
@@ -124,11 +124,13 @@ class Parser:
         ##################################################
         # Literals
         ##################################################
+        @self.pg.production('literal : INTEGER')
+        def type_int(state: ParserState, p):
+            return IntegerNode(p[0].getstr(), p[0].getsourcepos())
 
         ##################################################
         # Errors
         ##################################################
-
         @self.pg.error
         def error_handler(state: ParserState, token: Token):
             pos = token.getsourcepos()

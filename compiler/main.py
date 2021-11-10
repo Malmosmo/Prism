@@ -52,16 +52,17 @@ class Compiler:
 
         ast = parser.parse(tokens, state)
 
-        code_gen = CodeGenerator(ast)
+        # code_gen = CodeGenerator(ast)
+        output = ast.generate()
 
         with open("./out/test.go", "w") as f:
-            f.write(code_gen.output)
+            f.write(output)
 
-        response = subprocess.Popen(["go", "build", "-o", "./bin/out.exe", "./out/test.go"], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # response = subprocess.Popen(["go", "build", "-o", "./bin/out.exe", "./out/test.go"], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        print("----------------------")
-        print(response.stdout.read())
-        print(response.stderr.read())
-        print("----------------------")
+        # print("----------------------")
+        # print(response.stdout.read())
+        # print(response.stderr.read())
+        # print("----------------------")
 
-        return code_gen.output
+        return output
