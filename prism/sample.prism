@@ -1,4 +1,7 @@
 main () {
     int a = 2;
-    print(a);
+    string b = "test";
+    a = 3;
+    print(2 * a + 2 / 2);
+    print(b);
 }

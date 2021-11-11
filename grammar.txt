@@ -17,5 +17,13 @@ builtinfunc : PRINT ( expr )
 
 expr : INT
      : IDENTIFIER
+     : ( expr )
+     : expr + expr
+     : expr - expr
+     : expr * expr
+     : expr / expr
+
 
 type : TYPE_INT
+
+literals : INTEGER

@@ -7,14 +7,14 @@ class Node(BaseBox):
         self.value = value
         self.position = position
 
-    def rep(self):
+    def rep(self) -> str:
         if isinstance(self.value, Node):
             return f"{self.__class__.__name__}({self.value.rep()})"
 
         else:
             return f"{self.__class__.__name__}({self.value})"
 
-    def getsourcepos(self):
+    def getsourcepos(self) -> SourcePosition:
         return self.position
 
     def generate(self) -> str:
@@ -25,7 +25,7 @@ class Node(BaseBox):
 # Program
 ##################################################
 class ProgramNode(Node):
-    def generate(self):
+    def generate(self) -> str:
         return f"package main\n\n{self.value.generate()}"
 
 
@@ -40,10 +40,10 @@ class FuncNode(Node):
         self.return_value = return_value
         self.position = position
 
-    def rep(self):
+    def rep(self) -> str:
         return f"{self.__class__.__name__}({self.type.rep()}, {self.name}, {self.body.rep()}, {self.return_value.rep()})"
 
-    def generate(self):
+    def generate(self) -> str:
         return f"func {self.name} () {self.type} {{\n{self.body.generate()}\n{self.return_value.generate()}\n}}"
 
 
@@ -53,7 +53,7 @@ class VoidFuncNode(Node):
         self.body = body
         self.position = position
 
-    def rep(self):
+    def rep(self) -> str:
         return f"{self.__class__.__name__}({self.name}, {self.body.rep()})"
 
     def generate(self) -> str:
@@ -66,10 +66,9 @@ class VoidFuncNode(Node):
 class BuiltinFunctionNode(Node):
     def __init__(self, func: str, value: Node, position: SourcePosition) -> None:
         self.func = func
-        self.value = value
-        self.position = position
+        super().__init__(value, position)
 
-    def rep(self):
+    def rep(self) -> str:
         return f"{self.__class__.__name__}({self.func}, {self.value.rep()})"
 
     def generate(self) -> str:
@@ -92,10 +91,10 @@ class BlockNode(Node):
         self.commands = [value]
         self.position = position
 
-    def add(self, value: Node):
+    def add(self, value: Node) -> None:
         self.commands.append(value)
 
-    def rep(self):
+    def rep(self) -> str:
         return f"{self.__class__.__name__}([{', '.join((command.rep() for command in self.commands))}])"
 
     def generate(self) -> str:
@@ -103,7 +102,24 @@ class BlockNode(Node):
 
 
 ##################################################
-# Declaration
+# Binary Operations
+##################################################
+class BinaryOpNode(Node):
+    def __init__(self, operand: str, left: Node, right: Node, position: SourcePosition) -> None:
+        self.operand = operand
+        self.left = left
+        self.right = right
+        self.position = position
+
+    def rep(self) -> str:
+        return f"{self.__class__.__name__}({self.left.rep()} {self.operand} {self.right.rep()})"
+
+    def generate(self) -> str:
+        return f"({self.left.generate()} {self.operand} {self.right.generate()})"
+
+
+##################################################
+# Variables
 ##################################################
 class VarDecNode(Node):
     def __init__(self, type_: Node, name: str, value: Node, position: SourcePosition) -> None:
@@ -118,15 +134,12 @@ class VarDecNode(Node):
         return f"var {self.name} {self.type.generate()} = {self.value.generate()}"
 
 
-##################################################
-# Expressions
-##################################################
-class AssignNode(Node):
+class VarAssignNode(Node):
     def __init__(self, name: str, value: Node, position: SourcePosition) -> None:
         self.name = name
         super().__init__(value, position)
 
-    def rep(self):
+    def rep(self) -> str:
         return f"{self.__class__.__name__}({self.name}, {self.value.rep()})"
 
     def generate(self) -> str:
@@ -166,5 +179,10 @@ class IntegerNode(Node):
         self.value = value
         self.position = position
 
+    def generate(self) -> str:
+        return self.value
+
+
+class StringNode(Node):
     def generate(self) -> str:
         return self.value

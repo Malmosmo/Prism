@@ -7,16 +7,24 @@ from compiler.parser import Parser, ParserState
 
 KEYWORDS = {
     "PRINT": r"print(?!\w)",
+
     "TYPE_INT": r"int(?!\w)",
+    "TYPE_STR": r"string(?!\w)",
+
     "RETURN": r"return(?!\w)",
 }
 
 OPERATORS = {
-    "=": r"\=",
+    "=": r"\=(?!\w)",
+    "+": r"\+(?!\w)",
+    "-": r"\-(?!\w)",
+    "*": r"\*(?!\w)",
+    "/": r"\/(?!\w)",
 }
 
 CONSTANTS = {
     "INTEGER": r"\d+",
+    "STRING": r'\"[^\"]*\"',
 }
 
 PUNCTUATORS = {
@@ -48,7 +56,10 @@ class Compiler:
 
         # parser
         state = ParserState()
-        parser = Parser(list(TOKENTYPES), [], file, source)
+        parser = Parser(list(TOKENTYPES), [
+            ('left', ['+', '-']),
+            ('left', ['*', '/']),
+        ], file, source)
 
         ast = parser.parse(tokens, state)
 

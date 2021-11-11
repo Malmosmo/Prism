@@ -71,6 +71,7 @@ class Parser:
         ##################################################
         @self.pg.production('stmt : expr ;')
         @self.pg.production('stmt : decl ;')
+        @self.pg.production('stmt : assgn ;')
         def stmt(state: ParserState, p):
             return p[0]
 
@@ -86,11 +87,15 @@ class Parser:
             return BuiltinFunctionNode(p[0].getstr(), p[2], p[0].getsourcepos())
 
         ##################################################
-        # Declaration
+        # Variables
         ##################################################
         @self.pg.production('decl : type IDENTIFIER = expr')
-        def stmt(state: ParserState, p):
+        def decl(state: ParserState, p):
             return VarDecNode(p[0], p[1].getstr(), p[3], p[0].getsourcepos())
+
+        @self.pg.production('assgn : IDENTIFIER = expr')
+        def assgn(state: ParserState, p):
+            return VarAssignNode(p[0].getstr(), p[2], p[0].getsourcepos())
 
         ##################################################
         # Assign
@@ -102,9 +107,9 @@ class Parser:
         ##################################################
         # Expressions
         ##################################################
-        # @self.pg.production('expr : ( expr )')
-        # def expr_self(state: ParserState, p):
-        #     return p[1]
+        @self.pg.production('expr : ( expr )')
+        def expr_self(state: ParserState, p):
+            return p[1]
 
         @self.pg.production('expr : literal')
         def expr_int(state: ParserState, p):
@@ -114,11 +119,19 @@ class Parser:
         def expr_access(state: ParserState, p):
             return VarAccessNode(p[0].getstr(), p[0].getsourcepos())
 
+        @self.pg.production('expr : expr + expr')
+        @self.pg.production('expr : expr * expr')
+        @self.pg.production('expr : expr / expr')
+        @self.pg.production('expr : expr - expr')
+        def expr_plus(state: ParserState, p):
+            return BinaryOpNode(p[1].getstr(), p[0], p[2], p[0].getsourcepos())
+
         ##################################################
         # Types
         ##################################################
         @self.pg.production('type : TYPE_INT')
-        def type_int(state: ParserState, p):
+        @self.pg.production('type : TYPE_STR')
+        def type_(state: ParserState, p):
             return TypeNode(p[0].getstr(), p[0].getsourcepos())
 
         ##################################################
@@ -127,6 +140,10 @@ class Parser:
         @self.pg.production('literal : INTEGER')
         def type_int(state: ParserState, p):
             return IntegerNode(p[0].getstr(), p[0].getsourcepos())
+
+        @self.pg.production('literal : STRING')
+        def type_int(state: ParserState, p):
+            return StringNode(p[0].getstr(), p[0].getsourcepos())
 
         ##################################################
         # Errors
