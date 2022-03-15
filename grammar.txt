@@ -1,29 +1,27 @@
-prog : func
 
+expr :      un-expr
+            expr bin-op expr
 
-func : type IDENTIFIER () { block rtrn-stmt }
-       type IDENTIFIER () { rtrn-stmt }
-       IDENTIFIER () { block }
+un-expr :   prim-expr
+            un-op un-expr
 
-block : block stmt
-        stmt
+prim-expr : operand
 
-rtrn-stmt : RETURN stmt
+bin-op :     "||" | "&&" | rel_op | add_op | mul_op
 
-stmt : expr ;
-       builtinfunc ;
+rel_op :    "==" | "!=" | "<" | "<=" | ">" | ">="
 
-builtinfunc : PRINT ( expr )
+add_op :    "+" | "-" | "|" | "^" 
 
-expr : INT
-     : IDENTIFIER
-     : ( expr )
-     : expr + expr
-     : expr - expr
-     : expr * expr
-     : expr / expr
+mul_op :    "*" | "/" | "%" | "<<" | ">>" | "&" | "&^"
 
+un-op :     "+" | "-" | "!" | "^" | "*" | "&"
 
-type : TYPE_INT
+operand :   op-name
+            literal
+            "(" expr ")"
 
-literals : INTEGER
+op-name :   IDENTIFIER
+
+literal :   INTEGER
+            STRING

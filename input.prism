@@ -1,0 +1,45 @@
+class Vector {
+    string test;
+    int a;
+    int b;
+     // = "this is a test";
+    
+    __init__(int a, int b) int {
+        return this.a;
+    }
+
+    copy(int a, int b) int {
+        return a + b;
+    }
+
+    clone(int a, int b) int {
+        return a + + b;
+    }
+}
+
+// replace "y" "x"
+
+// include "stdlib/random.prism"
+
+const int __RANDOM__ = 2989;
+const uint32 a  = 42;
+
+// public class MyType {
+//     int a = 2;
+//     int b = 3;
+//     int c = 124;
+//     char cc = "This is a test";
+
+//     copy(MyType other) MyType {
+//         return 2
+//     }
+// };
+
+
+sum(int a, int b) int {
+    return a+b ;
+}
+
+main() int {
+    return 0 >> 42;
+}

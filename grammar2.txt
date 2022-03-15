@@ -1,0 +1,169 @@
+-------------------------------------------------------------
+| http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf |
+-------------------------------------------------------------
+constant :                  int-const
+                            float-const
+                            // char-const
+
+int-const :                 INTEGER
+
+float-const :               FLOAT
+
+primary-expr :              IDENTIFIER, constant, STRING
+                            "(" expr ")"
+
+postfix-expr :              primary-expr
+                            postfix-expr [ expr ]
+                            postfix-expr "(" arg-expr-list ")"
+                            postfix-expr . IDENTIFIER
+
+arg-expr-list :             assgn-expr
+                            arg-expr-list , assgn-expr
+
+unary-expr :                postfix-expr
+                            unary-op cast-expr
+
+unary-op :                  (& | * | + | - | ~ | !)
+
+cast-expr :                 unary-expr
+                            "<" type-name ">" cast-expr
+
+mult-expr :                 cast-expr
+                            mult-expr (* | / | %) cast-expr
+
+add-expr :                  mult-expr
+                            add-expr (+ | -) mult-expr
+
+shift-expr :                add-expr
+                            shift-expr (<< | >>) add-expr
+
+rel-expr :                  shift-expr
+                            rel-expr (< | > | <= | >=) shift-expr
+
+eq-expr :                   rel-expr
+                            eq-expr (== | !=) rel-expr
+
+and-expr :                  eq-expr
+                            and-expr & eq-expr
+
+xor-expr :                  and-expr
+                            xor-expr ^ and-expr
+
+or-expr :                   xor-expr
+                            or-expr | xor-expr
+
+land-expr :                 or-expr
+                            land-expr && or-expr
+
+lor-expr :                  land-expr
+                            lor-expr || land-expr
+
+cond-expr :                 lor-expr
+                            lor-expr ? expr : cond-expr
+
+assgn-expr :                cond-expr
+                            unary-expr assgn-op assgn-expr
+
+assgn-op :                  (= | *= | /= | %= | += | -= | <<= | >>= | &= | ^= | |=)
+
+expr :                      assgn-expr
+                            expr , assgn-expr
+
+====================================
+
+declaration :               type declarator-list = initializer ;
+                            type declarator-list ;
+
+declarator-list :           declarator
+                            declarator-list , declarator
+
+declarator :                IDENTIFIER
+
+initializer :               expr
+
+type :                      (void | char | int ...)
+                            type-name
+
+type-name :                 IDENTIFIER
+
+====================================
+
+statement-list :            statement
+                            statement-list statement
+
+statement :                 compound-statement
+                            selection-statement
+                            iteration-statement
+                            function-statement
+                            jump-statement
+                            simple-statement ;
+                            declaration
+
+simple-statement :          expression-statement
+                            crement-statement
+
+
+compound-stmt :             { statement-list }
+
+expression-statement :      expr
+
+selection-statement :       IF ( expr ) compound-statement
+                            IF ( expr ) compound-statement ELSE compound-statement
+
+iteration-statement :       WHILE ( expression ) statement
+                            FOR ( declaration simple-statement ; simple-statement ) statement
+
+jump-statement :            RETURN expr ;
+
+crement-statement :         expr (++ | --)
+
+========================================================================
+
+function-statement :        function-signature compound-statement
+
+function-signature :        function-declarator type
+
+function-declarator :       IDENTIFIER ( parameter-list )
+                            IDENTIFIER ( )
+
+parameter-list :            parameter
+                            parameter-list , parameter
+
+parameter :                 type declarator
+
+========================================================================
+
+class-statement :           CLASS IDENTIFIER class-compound
+
+class-compound :            { class-list }
+
+class-list :                "EMPTY"
+                            attribute-list
+                            method-list
+                            attribute-list method-list
+
+attribute-list :            attribute
+                            attribute-list attribute
+
+attribute :                 parameter ;
+
+method-list :               method
+                            method-list method
+
+method :                    function-statement
+
+========================================================================
+
+program :                   extended-statement-list
+
+extended-statement-list :   extended-statement
+                            extended-statement-list extended-statement
+
+extended-statement :        class-statement
+                            function-statement
+                            const-declaration
+
+const-declaration :         CONST type declarator-list = initializer ;
+
+
+preprocessing-statement :   INCLUDE STRING

@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-param" content="_csrf-frontend-knigaaudio">
+<meta name="csrf-token" content="bFmjpfh_pcfNydNijvSBhamwZLdzVErHU-ACGHcnWck1OpvCuSzG8ZXwpw_FxMSyx8AQ8R0EB4UJsXd7H2EAug==">
+    <title>The Hobbit - John Ronald Ruel Tolkien - listen online for free</title>
+    <link type="image/x-icon" href="/favicon.ico" rel="icon">
+<link href="/assets/fea880b6/css/jquery.custom-scrollbar.css?v=1582943881" rel="stylesheet">
+<link href="/assets/c709e200/css/bootstrap.css?v=1582943214" rel="stylesheet">
+<link href="/css/styles.css?v=1566374044" rel="stylesheet"></head>
+<body>
+
+<header>
+    <div class="first">
+        <div class="container">
+            <a href="/">
+                <img src="/images/logo.png"/>
+            </a>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <div class="container">
+            <ul>
+                <li>
+                    <a href="/books">
+                        Audiobooks
+                    </a>
+                </li>
+                <li>
+                    <a href="/genres">
+                        Genres
+                    </a>
+                </li>
+                <li>
+                    <a href="/authors">
+                        Authors
+                    </a>
+                </li>
+                <li>
+                    <a href="/readers">
+                        Readers
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<section class="searching ">
+    <div class="container">
+        <form class="search" action="/search" method="get">            <input type="text" name="term" placeholder="Search for audiobooks">
+            <button type="submit">Search</button>        </form>
+        <a class="random" href="/random">            <div class="random_big">
+                I'm lucky!
+            </div>
+
+            <div class="random_mini">
+                Random audiobook
+            </div>
+        </a>    </div>
+</section>
+
+<div class="container"><section class="media-item"  itemscope itemtype="https://schema.org/Audiobook">
+    <div class="row mb-3">
+        <div class="col-lg-4 d-none d-sm-block">
+            <img class="image" src="https://bookaudio.online/uploads/images/media/27/oFzJbfPBODtlehOL-tolkien-the-hobbit.jpg" alt="" itemprop="image">
+            <div class="social">
+                Share: <div class="ya-share2" data-services="facebook,twitter,vkontakte,gplus" data-counter=""></div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <h1 class="head">
+                <span itemprop="name">The Hobbit</span>            </h1>
+
+                        <div class="authors"  itemscope itemtype="http://schema.org/Person" itemprop="author">
+                <a href="/author/1591-john-ronald-ruel-tolkien-listen-online"><span itemprop="name">John Ronald Ruel Tolkien</span></a>            </div>
+            
+            <div class="d-sm-none d-block">
+                <img class="image" src="https://bookaudio.online/uploads/images/media/27/oFzJbfPBODtlehOL-tolkien-the-hobbit.jpg" alt="">
+                <div class="social">
+                    Share: <div class="ya-share2" data-services="facebook,twitter,vkontakte,gplus" data-counter=""></div>
+                </div>
+            </div>
+
+                        <div class="parameter categories">
+                <div class="parameter-label">
+                    Genre:
+                </div>
+
+                <div class="parameter-value"  itemprop="genre">
+                    <a href="/genres/childrens-fiction-listen-online">Children&#039;s Fiction</a>, <a href="/genres/fantasy-listen-online">Fantasy</a>                </div>
+            </div>
+                        <meta itemprop="encodingFormat" content="audio/mpeg">
+            <meta itemprop="inLanguage" content="en-US">
+            <meta itemprop="contentSize" content="">
+            <meta itemprop="duration" content="">
+                        <div class="parameter readers">
+                <div class="parameter-label">
+                    Reader:
+                </div>
+
+                <div class="parameter-value" itemprop="readBy">
+                    <div class="item">
+    <a href="/reader/493-robert-inglis-listen-online"><span itemprop="name">Robert Inglis</span></a></div>                </div>
+            </div>
+            
+            <div class="parameter tags">
+                            </div>
+
+            <div class="description">
+                <div class="text">
+                    At what age should a person stop reading children literature? "Never” – will surely answer one, who has ever read "The Hobbit” by J.R.R. Tolkien. This story truly emerged from a fairy tale, that Tolkien, a professor of English literature in Oxford, told his children. Nevertheless, incredible adventures, bright images and magical poems of "The Hobbit” make this story appealing at any age. By the way, modern adults can easily find common traits with the main character, hobbit Bilbo Baggins. He treasures his comfort and good reputation above everything in his life. Maybe following Bilbo’s example you will be able to leave cozy comfort zone and plunge into some life-changing adventure? But of course "The Hobbit” remains a perfect book for family reading with children. While listening to audiobook "The Hobbit, or There and Back again” you will have hours to amaze at bravery of dwarves, cunning of hobbit and wisdom of wizard on their way to the treasures on the Lonely Mountain.                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row book-image-player">
+        <div class="col-lg-8">
+                        <div class="player" id="jp_container_1">
+                <div class="song-and-progress">
+                    <div class="song">
+                        <div class="song-name">
+                            Загрузка...
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-b">
+                            <div class="jp-seek-bar audioplayer-bar">
+                                <div class="jp-play-bar audioplayer-bar-played"></div>
+                            </div>
+                        </div>
+
+                        <div class="time">
+                            <div class="time-start jp-current-time" role="timer" aria-label="time">
+                                00:00
+                            </div>
+
+                            <div class="time-end jp-duration" role="timer" aria-label="duration">
+                                00:00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="player-controls">
+                    <div class="jp-controls">
+                        <div class="play jp-play"></div>
+                        <div class="stop jp-pause"></div>
+                    </div>
+
+                    <div class="jp-volume-controls volume col-lg-3 d-none d-lg-flex">
+                        <img src="/images/sound.png"/>
+
+                        <div class="jp-volume-bar">
+                            <div class="jp-volume-bar-value"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <noindex>
+                    <div class="play-list default-skin">
+                        <ul>
+                            <li class="track active" data-url="//m3.audiokniga.club/audio/pjoCw5Z6LmbseomkdwWN9g/1645806322/uploads/books_eng/book27/eng/reader493/128/001.mp3">001.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/3l5FkJRck1ZQPe5envs3MQ/1645806322/uploads/books_eng/book27/eng/reader493/128/002.mp3">002.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/BOWbOiFOoqSRftKth3ZZ2g/1645806322/uploads/books_eng/book27/eng/reader493/128/003.mp3">003.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/xA6xSOqgPrUpjSD06dBX1w/1645806322/uploads/books_eng/book27/eng/reader493/128/004.mp3">004.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/j5Q1TKpIPh55yIiuxOJKeA/1645806322/uploads/books_eng/book27/eng/reader493/128/005.mp3">005.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/eO-Zsz7eZJyFjcHkURM0jQ/1645806322/uploads/books_eng/book27/eng/reader493/128/006.mp3">006.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/Y5MjgGGNPZ1IkHC4jk6VOw/1645806322/uploads/books_eng/book27/eng/reader493/128/007.mp3">007.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/SCK086XylhnX-Vmu1b7TWQ/1645806322/uploads/books_eng/book27/eng/reader493/128/008.mp3">008.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/-JgwDL_mO82aYbKChkGcAA/1645806322/uploads/books_eng/book27/eng/reader493/128/009.mp3">009.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/JPu04nU-gZl22GyeWqaQ5A/1645806322/uploads/books_eng/book27/eng/reader493/128/010.mp3">010.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/1hGm6Ee1MismfZzams-btQ/1645806322/uploads/books_eng/book27/eng/reader493/128/011.mp3">011.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/I84UCbsXYgsQVOwXtiMRag/1645806322/uploads/books_eng/book27/eng/reader493/128/012.mp3">012.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/M1UXRaWBUCHffR5ICzPBaQ/1645806322/uploads/books_eng/book27/eng/reader493/128/013.mp3">013.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/Zfa27se0E0-le_f4oxJOJQ/1645806322/uploads/books_eng/book27/eng/reader493/128/014.mp3">014.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/XWnj0bI4fHHke_sXLdPcHA/1645806322/uploads/books_eng/book27/eng/reader493/128/015.mp3">015.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/m6Pgxo0howeVi2oy32ikUQ/1645806322/uploads/books_eng/book27/eng/reader493/128/016.mp3">016.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/yfV3SkLnShLcbesIkSP4tw/1645806322/uploads/books_eng/book27/eng/reader493/128/017.mp3">017.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/qgEOoLidK5AYgbfuJlgjng/1645806322/uploads/books_eng/book27/eng/reader493/128/018.mp3">018.mp3</li><li class="track " data-url="//m3.audiokniga.club/audio/9TEuDANlOXTC9xLVpaIBpw/1645806322/uploads/books_eng/book27/eng/reader493/128/019.mp3">019.mp3</li>                        </ul>
+                    </div>
+                </noindex>
+            </div>
+
+            <div id="jquery_jplayer"></div>
+            
+                    </div>
+
+        <div class="col-lg-4">
+
+        </div>
+    </div>
+</section></div>
+<section class="sorting">
+    <div class="container">
+        <div class="row">
+            <div class="genres col-12 col-sm-4 mb-4 mb-sm-0">
+                <div class="title">
+                    Popular genres
+                </div>
+
+                <div class="items">
+                    <div>
+    <a href="/genres/classic-literature-listen-online">Classic  Literature - 439</a></div><div>
+    <a href="/genres/mystery-thriller-suspense-listen-online">Mystery, Thriller &amp; Suspense - 362</a></div><div>
+    <a href="/genres/modern-literature-listen-online">Modern Literature - 294</a></div><div>
+    <a href="/genres/short-stories-listen-online">Short Stories - 203</a></div><div>
+    <a href="/genres/crime-listen-online">Crime - 156</a></div><div>
+    <a href="/genres/horror-listen-online">Horror - 146</a></div>                </div>
+
+                <a class="btn btn-blue" href="/genres">All genres</a>            </div>
+
+            <div class="tags col-12 col-sm-4">
+                <div class="title">
+                    Top-10 tags
+                </div>
+
+                <div class="items">
+                    <div>
+    <a href="/tags/fiction-listen-online">Fiction - 662</a></div><div>
+    <a href="/tags/general-fiction-listen-online">General Fiction - 653</a></div><div>
+    <a href="/tags/adult-listen-online">Adult - 629</a></div><div>
+    <a href="/tags/adult-fiction-listen-online">Adult Fiction - 628</a></div><div>
+    <a href="/tags/novels-listen-online">Novels - 469</a></div><div>
+    <a href="/tags/20th-century-listen-online">20th Century - 445</a></div><div>
+    <a href="/tags/classics-listen-online">Classics - 435</a></div><div>
+    <a href="/tags/mystery-listen-online">Mystery - 402</a></div><div>
+    <a href="/tags/british-literature-listen-online">British Literature - 401</a></div><div>
+    <a href="/tags/suspense-listen-online">Suspense - 384</a></div>                </div>
+
+                <a class="btn btn-blue" href="/tags">All tags</a>            </div>
+
+            <div class="rklm col-12 col-sm-4">
+
+            </div>
+        </div>
+    </div>
+</section>
+<footer>
+    <div class="container">
+        <ul>
+            <li>
+                <a href="/books">
+                    Audiobooks
+                </a>
+            </li>
+            <li>
+                <a href="/genres">
+                    Genres
+                </a>
+            </li>
+            <li>
+                <a href="/authors">
+                    Authors
+                </a>
+            </li>
+            <li>
+                <a href="/readers">
+                    Readers
+                </a>
+            </li>
+        </ul>
+
+        <div class="copyright">
+            &copy; BookAudio.online
+        </div>
+    </div>
+</footer>
+
+<script src="/assets/c5b7379a/jquery.js?v=1582943214"></script>
+<script src="/assets/fea880b6/js/jquery.custom-scrollbar.min.js?v=1582943881"></script>
+<script src="/assets/fea880b6/js/jplayer/jquery.jplayer.min.js?v=1582943881"></script>
+<script src="/assets/fea880b6/js/player.min.js?v=1582943881"></script>
+<script src="/assets/fea880b6/js/item.js?v=1582943881"></script>
+<script src="//yastatic.net/share2/share.js"></script>
+<script src="//yastatic.net/es5-shims/0.0.2/es5-shims.min.js"></script>
+<script src="/assets/1ca9f52d/yii.js?v=1582943214"></script>
+<script src="/assets/c709e200/js/bootstrap.bundle.js?v=1582943214"></script>
+<script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script src="//vk.com/js/api/openapi.js?146"></script>
+<script src="/js/app.js?v=1566374044"></script>
+<script>(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter51620171 = new Ya.Metrika2({
+                id:51620171,
+                clickmap:true,
+                trackLinks:true,
+                accurateTrackBounce:true,
+                webvisor:true
+            });
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = "https://mc.yandex.ru/metrika/tag.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks2");
+
+$( document ).on( 'click', '[data-click-goal]', function(){
+    yaCounter51620171.reachGoal(
+        $( this ).attr( 'data-click-goal' )
+    );
+    
+    return true;
+});
+
+$( document ).on( 'submit', 'form[data-submit-goal]', function(){
+    yaCounter51620171.reachGoal(
+        $( this ).attr( 'data-submit-goal' )
+    );
+    
+    return true;
+});</script>
+<script>jQuery(function ($) {
+$(function() {
+  $( ".book-image-player .play-list" ).customScrollbar();
+});
+});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/51620171" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter --><!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-44652793-10"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-44652793-10');
+</script>
+</body>
+</html>

@@ -1,6 +1,7 @@
-# from .interpreter import Context
 from rply.token import SourcePosition
 import sys
+
+from sympy import source
 
 
 ##################################################
@@ -22,6 +23,7 @@ class Error(Exception):
         result = ""
 
         if self.position is None:
+            print(self.source)
             line_number = len(self.source)
             col_number = len(self.source[-1])
 
