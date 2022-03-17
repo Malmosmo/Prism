@@ -2,7 +2,7 @@ from rply import ParserGenerator
 from rply.token import Token
 
 from errors import *
-from astree import *
+from ast2 import *
 
 
 class ParserState:
@@ -36,66 +36,43 @@ class Parser:
 
             return p[0]
 
-        @self.pg.production('extended-statement : class-statement')
+        # @self.pg.production('extended-statement : class-statement')
         @self.pg.production('extended-statement : function-statement')
-        @self.pg.production('extended-statement : constant-statement')
+        # @self.pg.production('extended-statement : constant-statement')
+        # @self.pg.production('extended-statement : statement-list')
         def ext_stmt(state: ParserState, p):
             return BlockNode(p[0], p[0].getsourcepos())
 
-        @self.pg.production('constant-statement : CONST type declarator-list = initializer ;')
-        def const_stmt(state: ParserState, p):
-            return ConstantNode(p[1], p[2], p[4], p[0].getsourcepos())
+        # @self.pg.production('constant-statement : CONST type declarator-list = initializer ;')
+        # def const_stmt(state: ParserState, p):
+        #     return ConstantNode(p[1], p[2], p[4], p[0].getsourcepos())
 
         ##################################################
         # Class
         ##################################################
-        @self.pg.production('class-statement : CLASS IDENTIFIER class-compound')
-        def class_stmt(state: ParserState, p):
-            return ClassNode(p[1].getstr(), p[2], p[0].getsourcepos())
+        # @self.pg.production('class-statement : CLASS IDENTIFIER class-compound')
+        # def class_stmt(state: ParserState, p):
+        #     return ClassNode(p[1].getstr(), p[2], p[0].getsourcepos())
 
-        @self.pg.production('class-compound : { class-inner }')
-        def class_compound(state: ParserState, p):
-            return p[1]
+        # @self.pg.production('class-compound : { class-inner }')
+        # def class_compound(state: ParserState, p):
+        #     return p[1]
 
-        @self.pg.production('class-compound : { }')
-        def class_compound_1(state: ParserState, p):
-            return ClassCompoundNode(None, None, p[0].getsourcepos())
+        # @self.pg.production('class-compound : { }')
+        # def class_compound_1(state: ParserState, p):
+        #     return ClassCompoundNode(None, None, p[0].getsourcepos())
 
-        @self.pg.production('class-inner : attribute-list')
-        def class_inner(state: ParserState, p):
-            return ClassCompoundNode(p[0], None, p[0].getsourcepos())
+        # @self.pg.production('class-inner : attribute-list')
+        # def class_inner(state: ParserState, p):
+        #     return ClassCompoundNode(p[0], None, p[0].getsourcepos())
 
-        @self.pg.production('class-inner : method-list')
-        def class_inner_1(state: ParserState, p):
-            return ClassCompoundNode(None, p[0], p[0].getsourcepos())
+        # @self.pg.production('class-inner : method-list')
+        # def class_inner_1(state: ParserState, p):
+        #     return ClassCompoundNode(None, p[0], p[0].getsourcepos())
 
-        @self.pg.production('class-inner : attribute-list method-list')
-        def class_inner_2(state: ParserState, p):
-            return ClassCompoundNode(p[0], p[1], p[0].getsourcepos())
-
-        @self.pg.production('attribute-list : attribute')
-        def attr_list(state: ParserState, p):
-            return BlockNode(p[0], p[0].getsourcepos())
-
-        @self.pg.production('attribute-list : attribute-list attribute')
-        def attr_list_rec(state: ParserState, p):
-            p[0].add(p[1])
-
-            return p[0]
-
-        @self.pg.production('attribute : parameter ;')
-        def attr(state: ParserState, p):
-            return p[0]
-
-        @self.pg.production('method-list : function-statement')
-        def method_list(state: ParserState, p):
-            return BlockNode(p[0], p[0].getsourcepos())
-
-        @self.pg.production('method-list : method-list function-statement')
-        def method_list_rec(state: ParserState, p):
-            p[0].add(p[1])
-
-            return p[0]
+        # @self.pg.production('class-inner : attribute-list method-list')
+        # def class_inner_2(state: ParserState, p):
+        #     return ClassCompoundNode(p[0], p[1], p[0].getsourcepos())
 
         # @self.pg.production('attribute-list : attribute')
         # def attr_list(state: ParserState, p):
@@ -107,8 +84,18 @@ class Parser:
 
         #     return p[0]
 
-        # @self.pg.production('attribute : parameter')
+        # @self.pg.production('attribute : parameter ;')
         # def attr(state: ParserState, p):
+        #     return p[0]
+
+        # @self.pg.production('method-list : function-statement')
+        # def method_list(state: ParserState, p):
+        #     return BlockNode(p[0], p[0].getsourcepos())
+
+        # @self.pg.production('method-list : method-list function-statement')
+        # def method_list_rec(state: ParserState, p):
+        #     p[0].add(p[1])
+
         #     return p[0]
 
         ##################################################
@@ -180,11 +167,13 @@ class Parser:
         ##################################################
         @self.pg.production('increment-decrement-statement : expr INC')
         def inc_statement(state: ParserState, p):
-            return IncrementNode(p[0], p[0].getsourcepos())
+            # return IncrementNode(p[0], p[0].getsourcepos())
+            return IncDecNode(p[0], p[1].getstr(), p[0].getsourcepos())
 
         @self.pg.production('increment-decrement-statement : expr DEC')
         def inc_statement(state: ParserState, p):
-            return IncrementNode(p[0], p[0].getsourcepos())
+            # return IncrementNode(p[0], p[0].getsourcepos())
+            return IncDecNode(p[0], p[1].getstr(), p[0].getsourcepos())
 
         ##################################################
         # Iteration Statement
@@ -250,8 +239,20 @@ class Parser:
 
             return p[0]
 
-        @self.pg.production('declarator : IDENTIFIER')
+        @self.pg.production('declarator : direct-declarator')
         def declarator(state: ParserState, p):
+            return p[0]
+
+        @self.pg.production('declarator : pointer direct-declarator')
+        def declarator_pointer(state: ParserState, p):
+            return PointerNode(p[0].getstr(), p[1], p[0].getsourcepos())
+
+        @self.pg.production('pointer : *')
+        def pointer(state: ParserState, p):
+            return p[0]
+
+        @self.pg.production('direct-declarator : IDENTIFIER')
+        def direct_declarator(state: ParserState, p):
             return ValueNode(None, p[0].getstr(), p[0].getsourcepos())
 
         @self.pg.production('initializer : expr')
@@ -350,7 +351,7 @@ class Parser:
         def xor_expr(state: ParserState, p):
             return p[0]
 
-        @self.pg.production('xor-expr : xor-expr ^ and-expr')
+        @self.pg.production('xor-expr : xor-expr CARROT and-expr')
         def xor_expr_op(state: ParserState, p):
             return BinaryOpNode(p[1].getstr(), p[0], p[2], p[0].getsourcepos())
 
@@ -442,7 +443,6 @@ class Parser:
         @self.pg.production('type : INT')
         @self.pg.production('type : IDENTIFIER')
         def type_spec(state: ParserState, p):
-            # return IdentifierNode(p[0].getstr(), p[0].getsourcepos())
             return TypeNode(p[0].getstr(), p[0].getsourcepos())
 
         ##################################################
@@ -454,8 +454,7 @@ class Parser:
 
         @self.pg.production('unary-expr : unary-op cast-expr')
         def unary_expr_op(state: ParserState, p):
-            # Note: !! p[0].getsourcepos() -> p[0] str
-            return UnaryOpNode(p[0], p[1], p[1].getsourcepos())
+            return UnaryOpNode(p[0].getstr(), p[1], p[0].getsourcepos())
 
         ##################################################
         # Unary Operators
@@ -464,10 +463,10 @@ class Parser:
         @self.pg.production('unary-op : *')
         @self.pg.production('unary-op : +')
         @self.pg.production('unary-op : -')
-        # @self.pg.production('unary-op : ^')  # << bitwise not
+        @self.pg.production('unary-op : CARROT')  # << bitwise not
         @self.pg.production('unary-op : !')
         def unary_op(state: ParserState, p):
-            return p[0].getstr()
+            return p[0]
 
         ##################################################
         # Postfix Expression
@@ -504,11 +503,6 @@ class Parser:
         @self.pg.production('primary-expr : IDENTIFIER')
         @self.pg.production('primary-expr : constant')
         def primary_expr(state: ParserState, p):
-            # if isinstance(p[0], (IntegerNode, StringNode)):
-            #     return ValueNode("INT", p[0].value, p[0].getsourcepos())
-
-            # return ValueNode("IDENTIFIER", p[0].getstr(), p[0].getsourcepos())
-
             return ValueNode(None, p[0].getstr(), p[0].getsourcepos())
 
         @self.pg.production('primary-expr : ( expr )')
@@ -520,7 +514,6 @@ class Parser:
         ##################################################
         @self.pg.production('constant : INTEGER')
         def const_int(state: ParserState, p):
-            # return IntegerNode(p[0].getstr(), p[0].getsourcepos())
             return p[0]
 
         @self.pg.production('constant : STRING')

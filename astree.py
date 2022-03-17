@@ -289,13 +289,25 @@ class DeclarationAssgnNode(Node):
         self.position = position
 
     def rep(self) -> str:
-        return f"{self.__class__.__name__}({self._type.generate()} {self.declarator.rep()} = {self.initalizer.rep()})"
+        return f"{self.__class__.__name__}({self._type.rep()} {self.declarator.rep()} = {self.initalizer.rep()})"
 
     def generate(self) -> str:
         return f"var {self.declarator.generate()} {self._type.generate()} = {self.initalizer.generate()}"
 
     def implicit(self) -> str:
         return f"{self.declarator.generate()} := {self.initalizer.generate()}"
+
+
+class PointerNode(Node):
+    def __init__(self, pointer: str, value: Node, position: SourcePosition) -> None:
+        self.pointer = pointer
+        super().__init__(value, position)
+
+    def rep(self) -> str:
+        return f"{self.__class__.__name__}({self.pointer} {self.value.rep()})"
+
+    def generate(self) -> str:
+        return f"{self.pointer} {self.value.generate()}"
 
 
 ##################################################

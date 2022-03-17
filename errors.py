@@ -1,8 +1,6 @@
 from rply.token import SourcePosition
 import sys
 
-from sympy import source
-
 
 ##################################################
 # Errors

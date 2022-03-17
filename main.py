@@ -55,7 +55,7 @@ OPERATORS = {
 
     "MOD": r"\%",
     "&": r"\&",
-    "^": r"\^",
+    "CARROT": r"\^",
     "OR": r"\|",
 }
 
@@ -104,5 +104,6 @@ if __name__ == "__main__":
 
         ast = parser.parse(tokens, state)
 
-        with open("out/main.go", "w") as out_file:
-            out_file.write(Template + ast.generate())
+        with open("out/main.c", "w") as out_file:
+            # out_file.write(Template + ast.generate())
+            out_file.write(ast.clang())

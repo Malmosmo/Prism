@@ -77,7 +77,12 @@ declaration :               type declarator-list = initializer ;
 declarator-list :           declarator
                             declarator-list , declarator
 
-declarator :                IDENTIFIER
+declarator :                direct-declarator
+                            pointer direct-declarator
+
+direct-declarator :         IDENTIFIER
+
+pointer :                   *
 
 initializer :               expr
 
