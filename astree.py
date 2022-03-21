@@ -1,9 +1,5 @@
 from __future__ import annotations
-import hashlib
 from rply.token import BaseBox, SourcePosition
-
-
-__HASH__ = "12345678"
 
 
 class Node(BaseBox):
@@ -11,204 +7,91 @@ class Node(BaseBox):
         self.value = value
         self.position = position
 
-    def rep(self) -> str:
-        if isinstance(self.value, Node):
-            return f"{self.__class__.__name__}({self.value.rep()})"
-
-        else:
-            return f"{self.__class__.__name__}({self.value})"
-
     def getsourcepos(self) -> SourcePosition:
         return self.position
 
-    def generate(self) -> str:
+    def clang(self) -> str:
         pass
 
 
+class EmptyNode(Node):
+    def __init__(self) -> None:
+        pass
+
+    def clang(self) -> str:
+        return ""
+
+
 class BlockNode(Node):
-    def __init__(self, value: Node | str, position: SourcePosition) -> None:
+    def __init__(self, value: Node, position: SourcePosition) -> None:
         self.statements = [value]
         self.position = position
 
     def add(self, value: Node):
         self.statements.append(value)
 
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}([{''.join(stmt.rep() for stmt in self.statements)}])"
-
-    def generate(self) -> str:
-        return "\n".join(stmt.generate() for stmt in self.statements)
+    def clang(self) -> str:
+        return "\n".join(statement.clang() for statement in self.statements)
 
 
-class ListNode(BlockNode):
+class ListNode(Node):
     def __init__(self, value: Node | str, separator: str, position: SourcePosition) -> None:
-        self.statements = [value]
         self.separator = separator
+        self._list = [value]
         self.position = position
 
-    def generate(self) -> str:
-        return self.separator.join(stmt.generate() for stmt in self.statements)
+    def add(self, value: Node | str):
+        self._list.append(value)
+
+    def clang(self) -> str:
+        return self.separator.join(element.clang() for element in self._list)
 
 
-class ProgrammNode(Node):
-    def __init__(self, value: Node | str, position: SourcePosition) -> None:
+class BracketNode(Node):
+    def __init__(self, value: Node, brackets: str, position: SourcePosition) -> None:
+        self.brackets = brackets
         super().__init__(value, position)
 
-    def generate(self) -> str:
-        return f"programm"
+    def clang(self) -> str:
+        return self.brackets[0] + self.value.clang() + self.brackets[1]
 
 
-##################################################
-# Class
-##################################################
-class ClassNode(Node):
-    def __init__(self, name: str, body: Node, position: SourcePosition) -> None:
-        self.name = name
-        self.body = body
-        self.position = position
-
-    def generate(self) -> str:
-        return f"type {self.name} struct {{ {self.body.generate_attributes()} }} \n" + self.body.generate(self.name)
+class CurlyNode(BracketNode):
+    def __init__(self, value: Node, position: SourcePosition) -> None:
+        super().__init__(value, "{}", position)
 
 
-class ClassCompoundNode(Node):
-    def __init__(self, attributes: Node, methods: Node, position: SourcePosition) -> None:
-        self.attributes = attributes
-        self.methods = methods
-        self.position = position
+class CombinationNode(Node):
+    def __init__(self, value: Node, value_2: Node, position: SourcePosition) -> None:
+        self.value_2 = value_2
+        super().__init__(value, position)
 
-    def generate_attributes(self) -> str:
-        if self.attributes:
-            return "\n".join([attr.generate() for attr in self.attributes.statements])
+    def clang(self) -> str:
+        if isinstance(self.value_2, EmptyNode):
+            return self.value.clang()
 
-        return ""
-
-    def generate_methods(self, class_name: str) -> str:
-        if self.methods:
-            return "\n".join([method.generate_as_method(class_name) for method in self.methods.statements])
-
-        return ""
-
-    def generate(self, class_name: str = "") -> str:
-        return self.generate_methods(class_name)
+        return f"{self.value.clang()} {self.value_2.clang()}"
 
 
-##################################################
-# Constant
-##################################################
-class ConstantNode(Node):
-    def __init__(self, _type: Node, decl: Node, initalizer: Node, position: SourcePosition) -> None:
-        self._type = _type
-        self.decl = decl
-        self.initalizer = initalizer
-        self.position = position
-
-    def generate(self) -> str:
-        return f"const {self.decl.generate()} {self._type.generate()} = {self.initalizer.generate()}"
-
-
-##################################################
-# Function
-##################################################
-class FunctionDeclarationNode(Node):
-    def __init__(self, name: str, parameter: Node | None, position: SourcePosition) -> None:
-        self.name = name
-        self.parameter = parameter
-        self.position = position
-
-    def generate(self) -> str:
-        return f"{self.name}({self.parameter.generate()})"
-
-    def generate_as_method(self, class_name: str) -> str:
-        global __HASH__
-
-        signature = f"(this {class_name}, {self.parameter.generate()})"
-        _hash = hashlib.sha1((signature + __HASH__).encode()).hexdigest()[:8]
-        __HASH__ = _hash
-
-        return f"{self.name}__{class_name}__{_hash}{signature}"
-
-
-class FunctionSignatureNode(Node):
-    def __init__(self, decl: Node, return_type: Node, position: SourcePosition) -> None:
-        self.decl = decl
-        self.return_type = return_type
-        self.position = position
-
-    def generate(self) -> str:
-        return f"{self.decl.generate()} {self.return_type.generate()}"
-
-    def generate_as_method(self, class_name: str) -> str:
-        return f"{self.decl.generate_as_method(class_name)} {self.return_type.generate()}"
+# --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
 
 class FunctionNode(Node):
-    def __init__(self, signature: Node, body: Node, position: SourcePosition) -> None:
+    def __init__(self, _type: Node, signature: Node, body: Node, position: SourcePosition) -> None:
+        self._type = _type
         self.signature = signature
         self.body = body
         self.position = position
 
-    def generate(self) -> str:
-        return f"func {self.signature.generate()} {self.body.generate()}"
-
-    def generate_as_method(self, class_name: str) -> str:
-        return f"func {self.signature.generate_as_method(class_name)} {self.body.generate()}"
+    def clang(self) -> str:
+        return f"{self._type.clang()} {self.signature.clang()} {self.body.clang()}"
 
 
-class ParameterNode(Node):
-    def __init__(self, _type: Node, declarator: Node, position: SourcePosition) -> None:
-        self._type = _type
-        self.declarator = declarator
-        self.position = position
-
-    def generate(self) -> str:
-        return f"{self.declarator.generate()} {self._type.generate()}"
-
-
-##################################################
-# Statement
-##################################################
-class CompoundNode(Node):
-    def __init__(self, value: Node, position: SourcePosition) -> None:
-        super().__init__(value, position)
-
-    def generate(self) -> str:
-        return "{\n" + self.value.generate() + "\n}"
-
-
-class JumpNode(Node):
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.value.rep()})"
-
-    def generate(self) -> str:
-        return f"return {self.value.generate()}"
-
-
-class IfNode(Node):
-    def __init__(self, condition: Node, body: Node, position: SourcePosition) -> None:
-        self.condition = condition
-        self.body = body
-        self.position = position
-
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.condition.rep()} {self.body.rep()})"
-
-    def generate(self) -> str:
-        return f"if ({self.condition.generate()}) {self.body.generate()}"
-
-
-class IfElseNode(Node):
-    def __init__(self, condition: Node, body: Node, else_body: Node, position: SourcePosition) -> None:
-        self.condition = condition
-        self.body = body
-        self.else_body = else_body
-        self.position = position
-
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.condition.rep()} {self.body.rep()} {self.else_body.rep()})"
-
-    def generate(self) -> str:
-        return f"if ({self.condition.generate()}) {self.body.generate()} else {self.else_body.generate()}"
+class ExpressionNode(Node):
+    def clang(self) -> str:
+        return f"{self.value.clang()} ;"
 
 
 class WhileNode(Node):
@@ -217,102 +100,238 @@ class WhileNode(Node):
         self.body = body
         self.position = position
 
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.condition.rep()} {self.body.rep()})"
+    def clang(self) -> str:
+        return f"while ( {self.condition.clang()} ) {self.body.clang()}"
 
-    def generate(self) -> str:
-        return f"for ({self.condition.generate()}) {self.body.generate()}"
+
+class DoWhileNode(WhileNode):
+    def clang(self) -> str:
+        return f"do {self.body.clang()} while ( {self.condition.clang()} ) ;"
 
 
 class ForNode(Node):
-    def __init__(self, decl: Node, expr_1: Node, expr_2: Node, body: Node, position: SourcePosition) -> None:
-        self.decl = decl
-        self.expr_1 = expr_1
-        self.expr_2 = expr_2
+    def __init__(self, declaration: Node, condition: Node, increment: Node, body: Node, position: SourcePosition) -> None:
+        self.declaration = declaration
+        self.condition = condition
+        self.increment = increment
         self.body = body
         self.position = position
 
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.decl.rep()} {self.body.rep()})"
-
-    def generate(self) -> str:
-        return f"for {self.decl.implicit()} ; {self.expr_1.generate()} ; {self.expr_2.generate()} {self.body.generate()}"
+    def clang(self) -> str:
+        return f"for ( {self.declaration.clang()} {self.condition.clang()} ; {self.increment.clang()} ) {self.body.clang()}"
 
 
-# class FunctionNode(Node):
-#     def __init__(self, name: str, decl: Node, position: SourcePosition) -> None:
-#         self.name = name
-#         self.decl = decl
-#         self.position = position
-
-#     def rep(self) -> str:
-#         return f"{self.__class__.__name__}()"
-
-#     def generate(self) -> str:
-#         return f"func {self.name} {self.decl.generate()}"
-
-
-class CallNode(Node):
-    def __init__(self, func: Node, args: Node, position: SourcePosition) -> None:
-        self.func = func
-        self.args = args
+class IfElseNode(Node):
+    def __init__(self, condition: Node, body: Node, else_body, position: SourcePosition) -> None:
+        self.condition = condition
+        self.body = body
+        self.else_body = else_body
         self.position = position
 
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.func.rep()} {self.args.rep()})"
-
-    def generate(self) -> str:
-        return f"{self.func.generate()}({self.args.generate()})"
+    def clang(self) -> str:
+        return f"if ( {self.condition.clang()} ) {self.body.clang()} else {self.else_body.clang()}"
 
 
-##################################################
-# Declaration
-##################################################
+class IfNode(Node):
+    def __init__(self, condition: Node, body: Node, position: SourcePosition) -> None:
+        self.condition = condition
+        self.body = body
+        self.position = position
+
+    def clang(self) -> str:
+        return f"if ( {self.condition.clang()} ) {self.body.clang()}"
+
+
+class SwitchNode(Node):
+    def __init__(self, condition: Node, value: Node, position: SourcePosition) -> None:
+        self.condition = condition
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"switch ( {self.condition.clang()} ) {self.value.clang()}"
+
+
+class CaseNode(Node):
+    def __init__(self, case: Node, value: Node, position: SourcePosition) -> None:
+        self.case = case
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"case {self.case.clang()} : {self.value.clang()}"
+
+
+class CaseDefaultNode(Node):
+    def clang(self) -> str:
+        return f"default : {self.value.clang()}"
+
+
+class JumpNode(Node):
+    def __init__(self, _type: str,  value: Node, position: SourcePosition) -> None:
+        self._type = _type
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        if self._type in ["continue", "break"]:
+            return self._type
+
+        return f"return {self.value.clang()} ;"
+
+
+# -----------------------------
+
+class PointerNode(Node):
+    def __init__(self, value: Node | str, position: SourcePosition) -> None:
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"*{self.value.clang()}"
+
+# -----------------------------
+
+
+class StructOrUnionNode(Node):
+    def __init__(self, s_o_u: Node, ident: Node, decl: Node, position: SourcePosition) -> None:
+        self.s_o_u = s_o_u
+        self.ident = ident
+        self.decl = decl
+        self.position = position
+
+    def clang(self) -> str:
+        return f"{self.s_o_u.clang()} {self.ident.clang()} {{ {self.decl.clang()} }}"
+
+
+class StructDeclarationNode(Node):
+    def __init__(self, specifier: Node, declarator: Node, position: SourcePosition) -> None:
+        self.specifier = specifier
+        self.declarator = declarator
+        self.position = position
+
+    def clang(self) -> str:
+        return f"{self.specifier.clang()} {self.declarator.clang()} ;"
+
+# -----------------------------
+
+
+class DesignationNode(Node):
+    def __init__(self, value: Node, position: SourcePosition) -> None:
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"{self.value.clang()} = "
+
+
+class DesignatorNode(Node):
+    def __init__(self, value: Node | str, _type: int, position: SourcePosition) -> None:
+        self._type = _type
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        if self._type:
+            return f".{self.value}"
+
+        return f"[{self.value.clang()}]"
+
+# -----------------------------
+
+
+class EnumSpecifierNode(Node):
+    def __init__(self, qualifier: Node, enum_list: Node, position: SourcePosition) -> None:
+        self.qualifier = qualifier
+        self.enum_list = enum_list
+        self.position = position
+
+    def clang(self) -> str:
+        if isinstance(self.enum_list, EmptyNode):
+            return self.qualifier.clang()
+
+        return f"{self.qualifier.clang()} {self.enum_list.clang()}"
+
+
+class EnumQualifierNode(Node):
+    def __init__(self, value: str | EmptyNode, position: SourcePosition) -> None:
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        if isinstance(self.value, EmptyNode):
+            return "enum"
+
+        return f"enum {self.value}"
+
+
+class EnumeratorNode(Node):
+    def __init__(self, enum_const: Node, const_expr: Node, position: SourcePosition) -> None:
+        self.enum_const = enum_const
+        self.const_expr = const_expr
+        self.position = position
+
+    def clang(self) -> str:
+        if isinstance(self.const_expr, EmptyNode):
+            return self.enum_const.clang()
+
+        return f"{self.enum_const.clang()} = {self.const_expr.clang()}"
+
+# -----------------------------
+
+# TODO substitute by combination Node
+
+
+class DirectDeclaratorNode(Node):
+    def __init__(self, decl: Node, value: Node, position: SourcePosition) -> None:
+        self.decl = decl
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"{self.decl.clang()} {self.value.clang()}"
+
+
+class DeclaratorNode(Node):
+    def __init__(self, ptr: Node, value: Node | str, position: SourcePosition) -> None:
+        self.ptr = ptr
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        if isinstance(self.ptr, EmptyNode):
+            return self.value.clang()
+
+        return f"{self.ptr.clang()} {self.value.clang()}"
+
+
 class DeclarationNode(Node):
-    def __init__(self, _type: Node, value: Node | str, position: SourcePosition) -> None:
-        self._type = _type
-        self.value = value
+    def __init__(self, specifiers: Node, declaration_list: Node, position: SourcePosition) -> None:
+        self.specifiers = specifiers
+        self.declaration_list = declaration_list
         self.position = position
 
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self._type.rep()} {self.value.rep()})"
-
-    def generate(self) -> str:
-        return f"var {self.value.generate()} {self._type.generate()}"
+    def clang(self) -> str:
+        return f"{self.specifiers.clang()} {self.declaration_list.clang()} ;"
 
 
-class DeclarationAssgnNode(Node):
-    def __init__(self, _type: Node, declarator: Node, initalizer: Node, position: SourcePosition) -> None:
-        self._type = _type
+class DeclaratorInitNode(Node):
+    def __init__(self, declarator: Node, initalizer: Node, position: SourcePosition) -> None:
         self.declarator = declarator
         self.initalizer = initalizer
         self.position = position
 
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self._type.rep()} {self.declarator.rep()} = {self.initalizer.rep()})"
+    def clang(self) -> str:
+        if isinstance(self.initalizer, EmptyNode):
+            return self.declarator.clang()
 
-    def generate(self) -> str:
-        return f"var {self.declarator.generate()} {self._type.generate()} = {self.initalizer.generate()}"
+        return f"{self.declarator.clang()} = {self.initalizer.clang()}"
 
-    def implicit(self) -> str:
-        return f"{self.declarator.generate()} := {self.initalizer.generate()}"
-
-
-class PointerNode(Node):
-    def __init__(self, pointer: str, value: Node, position: SourcePosition) -> None:
-        self.pointer = pointer
-        super().__init__(value, position)
-
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.pointer} {self.value.rep()})"
-
-    def generate(self) -> str:
-        return f"{self.pointer} {self.value.generate()}"
+# -----------------------------
 
 
-##################################################
-# Binary Operations
-##################################################
+class ConditionalNode(Node):
+    def __init__(self, expr_1: Node, expr_2: Node, expr_3: Node, position: SourcePosition) -> None:
+        self.expr_1 = expr_1
+        self.expr_2 = expr_2
+        self.expr_3 = expr_3
+        self.position = position
+
+    def clang(self) -> str:
+        return f"{self.expr_1} ? {self.expr_2} : {self.expr_3}"
+
+
 class BinaryOpNode(Node):
     def __init__(self, operand: str, left: Node, right: Node, position: SourcePosition) -> None:
         self.operand = operand
@@ -320,93 +339,90 @@ class BinaryOpNode(Node):
         self.right = right
         self.position = position
 
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.left.rep()} {self.operand} {self.right.rep()})"
-
-    def generate(self) -> str:
-        return f"{self.left.generate()} {self.operand} {self.right.generate()}"
+    def clang(self) -> str:
+        return f"{self.left.clang()} {self.operand} {self.right.clang()}"
 
 
-##################################################
-# Unary Operations
-##################################################
-class UnaryOpNode(Node):
-    def __init__(self, operand: str, value: Node, position: SourcePosition) -> None:
-        self.operand = operand
-        self.value = value
-        self.position = position
-
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.operand} {self.value.rep()})"
-
-    def generate(self) -> str:
-        return f"{self.operand} {self.value.generate()}"
-
-
-##################################################
-# Cast Operations
-##################################################
 class CastNode(Node):
     def __init__(self, _type: Node, value: Node, position: SourcePosition) -> None:
         self._type = _type
-        self.value = value
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"({self._type.clang()}){self.value.clang()}"
+
+
+class UnaryOpNode(Node):
+    def __init__(self, operand: str, value: Node, position: SourcePosition) -> None:
+        self.operand = operand
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"{self.operand}{self.value.clang()}"
+
+
+class ArrayAccessNode(Node):
+    def __init__(self, postfix: Node, value: Node, position: SourcePosition) -> None:
+        self.postfix = postfix
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"{self.postfix.clang()} [ {self.value.clang()} ]"
+
+
+class FunctionCallNode(Node):
+    def __init__(self, name: Node, parameters: Node, position: SourcePosition) -> None:
+        self.name = name
+        self.parameters = parameters
         self.position = position
 
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self._type.rep()} {self.value.rep()})"
+    def clang(self) -> str:
+        return f"{self.name.clang()} ( {self.parameters.clang()} )"
 
-    def generate(self) -> str:
-        return f"({self._type.generate()}){self.value.generate()}"
+
+class AttributeNode(Node):
+    def __init__(self, name: Node, attribute: str, position: SourcePosition) -> None:
+        self.name = name
+        self.attribute = attribute
+        self.position = position
+
+    def clang(self) -> str:
+        return f"{self.name.clang()}.{self.attribute}"
+
+
+class AttributeArrowNode(AttributeNode):
+    def clang(self) -> str:
+        return f"{self.name.clang()} -> {self.attribute}"
+
+
+class ArrayNode(Node):
+    def __init__(self, _type: Node, value: Node, position: SourcePosition) -> None:
+        self._type = _type
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"({self._type.clang()}) {{ {self.value.clang()} }}"
+
+
+class SizeOfNode(Node):
+    def __init__(self, value: Node | str, position: SourcePosition) -> None:
+        super().__init__(value, position)
+
+    def clang(self) -> str:
+        return f"sizeof({self.value.clang()})"
 
 
 class TypeNode(Node):
     def __init__(self, value: str, position: SourcePosition) -> None:
         super().__init__(value, position)
 
-    def generate(self) -> str:
+    def clang(self) -> str:
         return self.value
 
 
-class IncrementNode(Node):
-    def __init__(self, value: Node, position: SourcePosition) -> None:
+class ValueNode(Node):
+    def __init__(self, _type: None, value: str, position: SourcePosition) -> None:
         super().__init__(value, position)
 
-    def generate(self) -> str:
-        return f"{self.value.generate()} ++"
-
-
-class MemberAccessNode(Node):
-    def __init__(self, obj: Node, member: Node, position: SourcePosition) -> None:
-        self.obj = obj
-        self.member = member
-        self.position = position
-
-    def rep(self) -> str:
-        return f"{self.__class__.__name__}({self.obj.rep()} {self.member.rep()})"
-
-    def generate(self) -> str:
-        return f"{self.obj.generate()}.{self.member.generate()}"
-
-
-##################################################
-# !!
-##################################################
-class ValueNode(Node):
-    def __init__(self, _type: str, value: str, position: SourcePosition) -> None:
-        self._type = _type
-        self.value = value
-        self.position = position
-
-    def rep(self) -> str:
-        return f"Value:{self._type}->{self.value}"
-
-    def generate(self) -> str:
+    def clang(self) -> str:
         return self.value
-
-
-class EmptyNode(Node):
-    def __init__(self) -> None:
-        pass
-
-    def generate(self) -> str:
-        return ""

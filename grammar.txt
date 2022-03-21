@@ -1,27 +1,279 @@
+https://gist.github.com/codebrainz/2933703
 
-expr :      un-expr
-            expr bin-op expr
 
-un-expr :   prim-expr
-            un-op un-expr
+translation-unit :                      external-declaration
+                                        translation-unit external-declaration
 
-prim-expr : operand
+external-declaration :                  function-definition
+                                        declaration
+                                        PRAGMA
 
-bin-op :     "||" | "&&" | rel_op | add_op | mul_op
+function-definition :                   declaration-specifiers declarator compound-statement
 
-rel_op :    "==" | "!=" | "<" | "<=" | ">" | ">="
+declaration-specifiers :                declaration-qualifier
+	                                    declaration-qualifier declaration-specifiers
 
-add_op :    "+" | "-" | "|" | "^" 
+declaration-qualifier :                 storage-class-specifier
+                                        type-specifier
+                                        type-qualifier
+                                        function-specifier
 
-mul_op :    "*" | "/" | "%" | "<<" | ">>" | "&" | "&^"
+storage-class-specifier :               TYPEDEF | EXTERN | STATIC | AUTO | REGISTER
 
-un-op :     "+" | "-" | "!" | "^" | "*" | "&"
+type-specifier :                        SHORT | LONG | INT | FLOAT | DOUBLE | CHAR | VOID | SIGNED | UNSIGNED
+                                        struct-or-union-specifier
+                                        enum-specifier
+                                        typedef-name
 
-operand :   op-name
-            literal
-            "(" expr ")"
+struct-or-union-specifier :             struct-or-union IDENTIFIER { struct-declaration-list }
+                                        struct-or-union { struct-declaration-list }
+                                        struct-or-union IDENTIFIER
 
-op-name :   IDENTIFIER
+struct-or-union :                       STRUCT | UNION
 
-literal :   INTEGER
-            STRING
+struct-declaration-list :               struct-declaration
+                                        struct-declaration-list struct-declaration
+
+struct-declaration :                    specifier-qualifier-list struct-declarator-list ;
+
+specifier-qualifier-list :              specifier-qualifier
+                                        specifier-qualifier specifier-qualifier-list
+
+specifier-qualifier :                   type-specifier
+                                        type-qualifier
+
+type-qualifier :                        CONST | RESTRICT | VOLATILE
+
+struct-declarator-list :                struct-declarator
+                                        struct-declarator-list , struct-declarator
+
+struct-declarator :                     declarator
+                                        declarator : const-expr
+
+declarator :                            direct-declarator
+                                        pointer direct-declarator
+
+pointer :                               *
+                                        * type-qualifier-list
+                                        * pointer
+                                        * type-qualifier-list pointer
+
+type-qualifier-list :                   type-qualifier
+                                        type-qualifier-list type-qualifier
+
+direct-declarator :                     IDENTIFIER
+                                        ( declarator )
+                                        direct-declarator [  ]
+                                        direct-declarator [ ? ]
+                                        direct-declarator ( )
+                                        direct-declarator ( parameter-type-list )
+                                        direct-declarator ( identifier-list )
+
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+
+assgn-expr :                            cond-expr
+                                        unary-expr assgn-op assgn-expr
+
+assgn-op :                              (= | *= | /= | %= | += | -= | <<= | >>= | &= | ^= | |=)
+
+cond-expr :                             lor-expr
+                                        lor-expr ? expr : cond-expr
+
+lor-expr :                              land-expr
+                                        lor-expr || land-expr
+
+land-expr :                             or-expr
+                                        land-expr && or-expr
+
+or-expr :                               xor-expr
+                                        or-expr | xor-expr
+
+xor-expr :                              and-expr
+                                        xor-expr ^ and-expr
+
+and-expr :                              eq-expr
+                                        and-expr & eq-expr
+
+eq-expr :                               rel-expr
+                                        eq-expr (== | !=) rel-expr
+
+rel-expr :                              shift-expr
+                                        rel-expr (< | > | <= | >=) shift-expr
+
+shift-expr :                            add-expr
+                                        shift-expr (<< | >>) add-expr
+
+add-expr :                              mult-expr
+                                        add-expr (+ | -) mult-expr
+
+mult-expr :                             cast-expr
+                                        mult-expr (* | / | %) cast-expr
+
+cast-expr :                             unary-expr
+                                        ( type-name ) cast-expr
+
+unary-expr :                            postfix-expr
+                                        unary-op cast-expr
+                                        SIZEOF unary-expr
+                                        SIZEOF ( type-name )
+
+unary-op :                              (& | * | + | - | ~ | !)
+
+postfix-expr :                          primary-expr
+                                        postfix-expr [ expr ]
+                                        postfix-expr ( )
+                                        postfix-expr ( argument-expression-list )
+                                        postfix-expr . IDENTIFIER
+                                        postfix-expr -> IDENTIFIER
+                                        postfix-expr ++
+                                        postfix-expr --
+                                        ( type-name ) { initalizer-list }
+                                        ( type-name ) { initalizer-list , }
+
+argument-expression-list :              assgn-expr
+                                        argument-expression-list , assgn-expr
+
+primary-expr :                          IDENTIFIER
+                                        CONSTANT
+                                        STRING
+                                        ( expr )
+
+-----------------------------------------------------------------------------------------
+
+enumeration-constant :                  IDENTIFIER
+
+-----------------------------------------------------------------------------------------
+
+expr :                                  assgn-expr
+                                        expr , assgn-expr
+
+arg-expr-list :                         assgn-expr
+                                        arg-expr-list , assgn-expr
+
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+
+type-name :                             specifier-qualifier-list
+                                        specifier-qualifier-list abstract-declarator
+
+abstract-declarator :                   pointer
+                                        direct-abstract-declarator
+                                        pointer direct-abstract-declarator
+
+direct-abstract-declarator :            ( abstract-declarator )
+                                        [ ]
+                                        [ assgn-expr]
+                                        direct-abstract-declarator [ ]
+                                        direct-abstract-declarator [ assgn-expr]
+                                        [ * ]
+                                        direct-abstract-declarator [ * ]
+                                        //
+                                        direct-abstract-declarator? "[" type-qualifier-list? assignment-expression? "]"
+	                                    direct-abstract-declarator? "[" "static" type-qualifier-list? assignment-expression "]"
+	                                    direct-abstract-declarator? "[" type-qualifier-list "static" assignment-expression "]"
+                                        direct-abstract-declarator? "(" parameter-type-list? ")"
+
+parameter-type-list :                   parameter-list
+                                        parameter-list , "..."
+
+parameter-list :                        parameter-declaration
+                                        parameter-list , parameter-declaration
+
+parameter-declaration :                 declaration-specifier declarator
+                                        declaration-specifier abstract-declarator
+                                        declaration-specifier
+
+initalizer-list :                       init-qualifier
+                                        initalizer-list , init-qualifier
+
+init-qualifier :                        designation initalizer
+                                        initalizer
+
+designation :                           designator-list =
+
+designator-list :                       designator
+                                        designator-list  designator
+
+designator :                            [ const-expr ]
+                                        . IDENTIFIER
+
+const-expr :                            cond-expr
+
+initalizer :                            assgn-expr
+                                        { initalizer-list }
+                                        { initalizer-list , }
+
+identifier-list :                       IDENTIFIER
+                                        identifier-list , IDENTIFIER
+
+enum-specifier :                        enum-qualifier
+                                        enum-qualifier enum-list
+
+enum-qualifier :                        ENUM
+                                        ENUM IDENTIFIER
+
+enum-list :                             { enumerator-list }
+                                        { enumerator-list , }
+
+enumerator-list :                       enumerator
+                                        enumerator-list , enumerator
+
+enumerator :                            enumeration-constant
+                                        enumeration-constant = const-expr
+
+typedef-name :                          TYPEDIDENT
+
+function-specifier :                    INLINE
+
+declaration-list :                      declaration
+                                        declaration-list declaration
+
+declaration :                           declaration-specifiers init-declarator-list ;
+                                        declaration-specifiers ;
+
+init-declarator-list :                  init-declarator
+                                        init-declarator-list , init-declarator
+
+init-declarator :                       declarator
+                                        declarator = initalizer
+
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+
+compound-statement :                    { }
+                                        { block-item-list }
+
+block-item-list :                       block-item
+                                        block-item-list block-item
+
+block-item :                            statement
+                                        declaration
+
+statement :                             expression-statement
+                                        compound-statement
+                                        selection-statement
+                                        iteration-statement
+                                        jump-statement
+
+expression-statement :                  expr ;
+
+labeled-statement :                     CASE const-expr : statement
+                                        DEFAULT : statement
+
+selection-statement :                   IF ( expr ) statement
+                                        IF ( expr ) compound-statement ELSE statement
+                                        SWITCH ( expr ) statement
+
+iteration-statement :                   WHILE ( expr ) statement
+                                        DO statement WHILE ( expr ) ;
+                                        for ( declaration expr ; expr ) statement
+
+jump-statement :                        CONTINUE ;
+                                        BREAK ;
+                                        RETURN expr ;
+
+-----------------------------------------------------------------------------------------
+# Notes
+-----------------------------------------------------------------------------------------
+1. 1 shift / reduce conflict on ENUM
